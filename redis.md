@@ -25,3 +25,23 @@ Hash hash表
 
 Zset 有序集合，可以根据排序后的结果返回，也可以做范围查询
 
+## 集群模式
+
+主从/哨兵
+
+集群
+
+## Redis和数据库的一致性
+
+一致性要求低可以使用两次删除
+
+一致性要求高采用队列，并哈希至同一个工作线程
+
+[redis缓存与数据库一致性问题解决](https://blog.csdn.net/qq_27384769/article/details/79499373)
+
+[redis系列之数据库与缓存数据一致性解决方案](https://www.cnblogs.com/cxxjohnson/p/8519616.html)
+
+
+
+
+

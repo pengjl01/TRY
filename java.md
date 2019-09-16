@@ -32,6 +32,18 @@ ConcurrentSkipListMap 跳表实现的Map
 
 ## Java内存模型
 
+
+
+**虚拟机栈**：线程私有，随线程创建而创建。栈里面是一个一个“栈帧”，每个栈帧对应一次方法调用。栈帧中存放了局部变量表（基本数据类型变量和对象引用）、操作数栈、方法出口等信息。当栈调用深度大于JVM所允许的范围，会抛出StackOverflowError的错误。
+
+**本地方法栈**：线程私有，这部分主要与虚拟机用到的Native方法相关，一般情况下，并不需要关心这部分的内容。
+
+**程序计数器**：也叫PC寄存器，JVM支持多个线程同时运行，每个线程都有自己的程序计数器。倘若当前执行的是 JVM 的方法，则该寄存器中保存当前执行指令的地址；倘若执行的是native方法，则PC寄存器中为空。（PS：线程执行过程中并不都是一口气执行完，有可能在一个CPU时钟周期内没有执行完，由于时间片用完了，所以不得不暂停执行，当下一次获得CPU资源时，通过程序计数器就知道该从什么地方开始执行）
+
+**方法区**：方法区存放类的信息（包括类的字节码，类的结构）、常量、静态变量等。字符串常量池就是在方法区中。虽然Java虚拟机规范把方法区描述为堆的一个逻辑部分，但是它却有一个别名叫做Non-Heap（非堆），目的是与Java堆区分开来。很多人都更愿意把方法区称为“永久代”（Permanent Generation）。从jdk1.7已经开始准备“去永久代”的规划，jdk1.7的HotSpot中，已经把原本放在方法区中的静态变量、字符串常量池等移到堆内存中。
+
+**堆**：堆中存放的是数组（PS：数组也是对象）和对象。当申请不到空间时会抛出OutOfMemoryError。
+
 ### 几个性质
 
 1. 原子性：保证 Java内存模型中原子变量内存操作的。通常有 read、write、load、use、assign、store、lock、unlock等这些。
@@ -84,6 +96,8 @@ survivor1 1/10
 
 ### GC ROOT
 
+[GC ROOT](https://www.jianshu.com/p/dcfe84c50811?from=timeline&isappinstalled=0)
+
 一个对象可以属于多个root，GC root有几下种：
 
 Class - 由系统类加载器(system class loader)加载的对象，这些类是不能够被回收的，他们可以以静态字段的方式保存持有其它对象。我们需要注意的一点就是，通过用户自定义的类加载器加载的类，除非相应的java.lang.Class实例以其它的某种（或多种）方式成为roots，否则它们并不是roots，.
@@ -120,19 +134,23 @@ Held by JVM - 用于JVM特殊目的由GC保留的对象，但实际上这个与J
 
 ### 悲观锁
 
-同一时刻只允许一个线程进行操作
+假设一定会冲突，先行预防。
 
 ### 乐观锁
 
-读取不加锁，写入时判断是否有更改。脏数据的读取是必然的
+假设不会冲突。检测到冲突再解决冲突。
 
 #### 两种实现
 
 version：每次更新时version+1，读取时一并取出version。如果更新时发现version与已获得version不一致，则更新失败。
 
-CAS：
+CAS：一直读取并尝试进行cas操作直到cas成功
 
+[各种锁](https://www.cnblogs.com/myseries/p/10773078.html)
 
+[为什么cas比synchronize快但cpu占用更高](https://www.cnblogs.com/kubidemanong/p/10681550.html)
+
+[彻底搞懂synchronized(从偏向锁到重量级锁)](https://blog.csdn.net/qq_38462278/article/details/81976428)
 
 ## 多线程
 
@@ -149,6 +167,8 @@ sleep不会释放锁，wait会释放
 ### Math.floor和强制转换有啥区别
 
 正数一样，但负数强转是返回比较大的。
+
+
 
 ## java面试题
 
